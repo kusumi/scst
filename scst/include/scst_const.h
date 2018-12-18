@@ -55,6 +55,10 @@
 
 #define SCST_CONST_VERSION SCST_CONST_INTF_VER
 
+#ifndef RHEL_RELEASE_VERSION
+#define RHEL_RELEASE_VERSION(maj, min) 0
+#endif
+
 /*** Shared constants between user and kernel spaces ***/
 
 /* Max size of CDB */
@@ -371,7 +375,9 @@ static inline int scst_sense_response_code(const uint8_t *sense)
 	&& (!defined(RHEL_MAJOR) || RHEL_MAJOR -0 <= 5)
 #define WRITE_ATTRIBUTE             0x8D
 #endif
-#if !defined(__KERNEL__) || LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
+#if (!defined(__KERNEL__) || LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)) && \
+	(!defined(RHEL_RELEASE_CODE) || \
+	RHEL_RELEASE_CODE -0 < RHEL_RELEASE_VERSION(7, 6))
 #define WRITE_VERIFY_16             0x8E
 #endif
 #define VERIFY_6                    0x13
